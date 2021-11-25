@@ -1,0 +1,62 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "ones",
+  "title": "ones",
+  "description": "",
+  "icon": "command-icon.png",
+  "author": "K8sCat",
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "task",
+      "title": "Task",
+      "subtitle": "搜索工作项",
+      "description": "",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "teamUUID",
+      "type": "textfield",
+      "required": true,
+      "title": "TeamUUID",
+      "description": "",
+      "placeholder": "teamUUID"
+    },
+    {
+      "name": "userUUID",
+      "type": "textfield",
+      "required": true,
+      "title": "UserUUID",
+      "description": "",
+      "placeholder": "userUUID"
+    },
+    {
+      "name": "token",
+      "type": "password",
+      "required": true,
+      "title": "Token",
+      "description": "",
+      "placeholder": "token"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.25.6",
+    "axios": "^0.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "~16.10.0",
+    "@types/react": "^17.0.28",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "react-devtools": "^4.19.2",
+    "typescript": "^4.4.3"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop"
+  }
+}
