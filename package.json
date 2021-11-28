@@ -2,43 +2,137 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "ones",
   "title": "ones",
-  "description": "",
+  "description": "Raycast ONES.AI 插件",
   "icon": "command-icon.png",
   "author": "K8sCat",
   "license": "MIT",
   "commands": [
     {
-      "name": "task",
-      "title": "Task",
-      "subtitle": "搜索工作项",
-      "description": "",
+      "name": "search-project-task",
+      "title": "Project - 工作项",
+      "subtitle": "搜索 Project 工作项",
+      "description": "搜索并快速打开 Project 工作项",
+      "mode": "view"
+    },
+    {
+      "name": "search-project-project",
+      "title": "Project - 项目",
+      "subtitle": "搜索 Project 项目",
+      "description": "搜索并快速打开 Project 项目",
+      "mode": "view"
+    },
+    {
+      "name": "search-project-resource",
+      "title": "Project - 文件",
+      "subtitle": "搜索 Project 文件",
+      "description": "搜索并快速打开 Project 文件",
+      "mode": "view"
+    },
+    {
+      "name": "search-wiki-space",
+      "title": "Wiki - 页面组",
+      "subtitle": "搜索 Wiki 页面组",
+      "description": "搜索并快速打开 Wiki 页面组",
+      "mode": "view"
+    },
+    {
+      "name": "search-wiki-page",
+      "title": "Wiki - 页面",
+      "subtitle": "搜索 Wiki 页面",
+      "description": "搜索并快速打开 Wiki 页面",
+      "mode": "view"
+    },
+    {
+      "name": "search-wiki-resource",
+      "title": "Wiki - 附件",
+      "subtitle": "搜索 Wiki 附件",
+      "description": "搜索并快速打开 Wiki 附件",
       "mode": "view"
     }
   ],
   "preferences": [
     {
+      "name": "baseAPI",
+      "type": "textfield",
+      "required": true,
+      "title": "接口地址",
+      "description": "接口地址",
+      "placeholder": "baseAPI",
+      "default": "https://ones.ai/project/api"
+    },
+    {
       "name": "teamUUID",
       "type": "textfield",
       "required": true,
-      "title": "TeamUUID",
-      "description": "",
+      "title": "团队UUID",
+      "description": "团队UUID",
       "placeholder": "teamUUID"
     },
     {
       "name": "userUUID",
       "type": "textfield",
       "required": true,
-      "title": "UserUUID",
-      "description": "",
+      "title": "用户UUID",
+      "description": "用户UUID",
       "placeholder": "userUUID"
     },
     {
       "name": "token",
       "type": "password",
       "required": true,
-      "title": "Token",
-      "description": "",
+      "title": "登录凭证",
+      "description": "登录凭证",
       "placeholder": "token"
+    },
+    {
+      "name": "projectSearchTypeProject",
+      "type": "checkbox",
+      "label": "项目",
+      "required": true,
+      "title": "Project 搜索类型",
+      "description": "项目",
+      "default": true
+    },
+    {
+      "name": "projectSearchTypeTask",
+      "type": "checkbox",
+      "label": "工作项",
+      "required": true,
+      "description": "工作项",
+      "default": true
+    },
+    {
+      "name": "projectSearchTypeResource",
+      "type": "checkbox",
+      "label": "文件",
+      "required": true,
+      "description": "文件",
+      "default": true
+    },
+    {
+      "name": "wikiSearchTypeSpace",
+      "type": "checkbox",
+      "label": "页面组",
+      "required": true,
+      "title": "Wiki 搜索类型",
+      "description": "页面组",
+      "default": true
+    },
+    {
+      "name": "wikiSearchTypePage",
+      "type": "checkbox",
+      "label": "页面",
+      "required": true,
+      "description": "页面",
+      "default": true
+    },
+    {
+      "name": "wikiSearchTypeResource",
+      "type": "checkbox",
+      "label": "附件",
+      "required": true,
+      "description": "附件",
+      "default": true
     }
   ],
   "dependencies": {
