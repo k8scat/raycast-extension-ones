@@ -1,5 +1,5 @@
 import client, { Product } from "./http";
-import { GraphqlData, SearchResult, Task } from "./types";
+import { GraphqlData, SearchResult, Sprint } from "./types";
 import { showToast, ToastStyle } from "@raycast/api";
 
 export enum SearchType {
@@ -10,37 +10,34 @@ export enum SearchType {
   SPACE = "space"
 }
 
-export async function queryTasks(key: string): Promise<Task[]> {
-  let number = parseInt(key);
-  number = isNaN(number) ? 0 : number;
-  const uuid = /^[a-zA-Z0-9]{16}$/.test(key) ? key : "";
+export async function searchSprints(key: string): Promise<Sprint[]> {
   const query = `
   {
-    tasks (
+    sprints (
       filterGroup: [
-        {
-          number_equal: ${number}
-        }
-        {
-          uuid_equal: "${uuid}"
-        }
         {
           name_match: "${key}"
         },
         {
           description_match: "${key}"
         }
+        {
+          assign: {
+            name_match: "${key}"
+          }
+        }
       ]
-      limit: 50
+      limit: 100
     ) {
       uuid
-      number
       name
       description
       assign {
+        uuid
         name
       }
-      status {
+      project {
+        uuid
         name
       }
     }
@@ -48,9 +45,9 @@ export async function queryTasks(key: string): Promise<Task[]> {
   const data: GraphqlData = { query };
   try {
     const resp = await client.post(Product.PROJECT, "items/graphql", data);
-    return Promise.resolve(resp.data.tasks as Task[]);
+    return Promise.resolve(resp.data.sprints as Sprint[]);
   } catch (err) {
-    showToast(ToastStyle.Failure, "search tasks failed", (err as Error).message);
+    showToast(ToastStyle.Failure, "search sprints failed", (err as Error).message);
     return Promise.reject(err);
   }
 }

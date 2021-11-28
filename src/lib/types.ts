@@ -3,14 +3,14 @@ export interface GraphqlData {
   variables?: { [key: string]: any };
 }
 
-export interface Task {
+export interface Sprint {
   uuid: string;
   number: number;
   name: string;
   description: string;
-  url?: string;
   assign: Assign;
-  status: Status;
+  project: Project;
+  url?: string;
 }
 
 export interface Assign {
@@ -18,7 +18,7 @@ export interface Assign {
   name: string;
 }
 
-export interface Status {
+export interface Project {
   uuid?: string;
   name: string;
 }

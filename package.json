@@ -29,6 +29,13 @@
       "mode": "view"
     },
     {
+      "name": "search-project-sprint",
+      "title": "Project - 迭代",
+      "subtitle": "搜索 Project 迭代",
+      "description": "搜索并快速打开 Project 迭代",
+      "mode": "view"
+    },
+    {
       "name": "search-wiki-space",
       "title": "Wiki - 页面组",
       "subtitle": "搜索 Wiki 页面组",
