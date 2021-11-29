@@ -1,5 +1,11 @@
 # raycast-ones-extensions
 
+<p align="center">
+<a href="https://github.com/k8scat/raycast-ones-extensions"><img src="https://img.shields.io/github/stars/k8scat/raycast-ones-extensions.svg?style=flat&logo=github&colorB=deeppink&label=stars"></a>
+<a href="https://github.com/k8scat/raycast-ones-extensions"><img src="https://img.shields.io/github/forks/k8scat/raycast-ones-extensions.svg"></a>
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-purple.svg" alt="License: MIT"></a>
+</p>
+
 Raycast extensions for [ones.ai](https://ones.ai).
 
 ## Support
