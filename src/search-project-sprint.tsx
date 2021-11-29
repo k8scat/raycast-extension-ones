@@ -1,8 +1,8 @@
 import { ActionPanel, CopyToClipboardAction, List, OpenInBrowserAction, render } from "@raycast/api";
 import { searchSprints } from "./lib/api";
-import { Sprint } from "./lib/types";
+import { Sprint } from "./lib/type";
 import { useState } from "react";
-import client from "./lib/http";
+import { convertSprintURL, convertTimestamp } from "./lib/util";
 
 export function SearchSprints() {
   const [searchResult, setSearchResult] = useState<Sprint[]>([]);
@@ -15,7 +15,7 @@ export function SearchSprints() {
     setLoading(true);
     const result = await searchSprints(text);
     result.map((sprint) => {
-      sprint.url = `${client.baseURL}/project/${sprint.project.uuid}/sprint/${sprint.uuid}`;
+      sprint.url = convertSprintURL(sprint.project.uuid, sprint.uuid);
       return sprint;
     });
     setSearchResult(result);
@@ -33,6 +33,8 @@ export function SearchSprints() {
           <List.Item
             key={index}
             title={item.name}
+            subtitle={item.assign.name}
+            accessoryTitle={`${item.planStartTime ? convertTimestamp(item.planStartTime) : "?"} - ${item.planEndTime ? convertTimestamp(item.planEndTime) : "?"}`}
             actions={
               <ActionPanel>
                 <OpenInBrowserAction url={item.url ? item.url : ""} />

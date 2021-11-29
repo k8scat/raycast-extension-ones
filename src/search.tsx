@@ -1,44 +1,96 @@
-import { ActionPanel, CopyToClipboardAction, List, OpenInBrowserAction } from "@raycast/api";
-import { search, SearchType } from "./lib/api";
-import { SearchItem, SearchResult } from "./lib/types";
-import { useState } from "react";
-import client, { Product } from "./lib/http";
+import { ActionPanel, CopyToClipboardAction, List, OpenInBrowserAction, PushAction } from "@raycast/api";
+import { mapProjects, mapSpaces, mapTasks, mapUsers, search, SearchType } from "./lib/api";
+import { Project, SearchItem, SearchResult, Space, Task, User } from "./lib/type";
+import { useEffect, useState } from "react";
+import { Product } from "./lib/http";
+import { convertPageURL, convertProjectURL, convertResourceURL, convertSpaceURL, convertTaskURL } from "./lib/util";
+import { AddOrUpdateManhour } from "./manage-manhour";
 
 interface Props {
   product: Product;
   searchType: SearchType[];
+  start?: number;
+  text?: string;
 }
 
 export function Search(props: Props) {
-  const [searchResult, setSearchResult] = useState<SearchResult>({});
-  const [loading, setLoading] = useState<boolean>(false);
+  const [searchResult, setSearchResult] = useState<SearchResult>({
+    datas: {},
+    total: 0,
+    has_next: false,
+    next_cursor: 0,
+    took_time: 0
+  });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [users, setUsers] = useState<{ [key: string]: User }>({});
+  const [tasks, setTasks] = useState<{ [key: string]: Task }>({});
+  const [spaces, setSpaces] = useState<{ [key: string]: Space }>({});
+  const [projects, setProjects] = useState<{ [key: string]: Project }>({});
+
+  useEffect(() => {
+    (async () => {
+      if (props.text) {
+        await onSearchTextChange(props.text);
+      }
+      setLoading(false);
+    })();
+  }, []);
+
   const onSearchTextChange = async (text: string) => {
     if (text.length === 0) {
       return;
     }
     setLoading(true);
     const result = await search(props.product, text, props.searchType);
-    result.project = result.project?.map((project) => {
-      project.url = `${client.baseURL}/project/${project.fields.uuid}`;
+    const userUUIDs: string[] = [];
+    const taskUUIDs: string[] = [];
+    const spaceUUIDs: string[] = [];
+    const projectUUIDs: string[] = [];
+    result.datas.project = result.datas.project?.map((project) => {
+      project.url = convertProjectURL(project.fields.uuid);
+      userUUIDs.push(project.fields.owner);
       return project;
     });
-    result.task = result.task?.map((task) => {
-      task.url = `${client.baseURL}/task/${task.fields.uuid}`;
+    result.datas.task = result.datas.task?.map((task) => {
+      task.url = convertTaskURL(task.fields.uuid);
+      userUUIDs.push(task.fields.assign);
+      taskUUIDs.push(task.fields.uuid);
+      projectUUIDs.push(task.fields.project_uuid);
       return task;
     });
-    result.space = result.space?.map((space) => {
-      space.url = `${client.baseURL}/space/${space.fields.uuid}`;
+    result.datas.space = result.datas.space?.map((space) => {
+      space.url = convertSpaceURL(space.fields.uuid);
       return space;
     });
-    console.log(result.space);
-    result.page = result.page?.map((page) => {
-      page.url = `${client.baseURL}/page/${page.fields.page_uuid}`;
+    result.datas.page = result.datas.page?.map((page) => {
+      page.url = convertPageURL(page.fields.page_uuid);
+      userUUIDs.push(page.fields.owner_uuid);
+      spaceUUIDs.push(page.fields.space_uuid);
       return page;
     });
-    result.resource = result.resource?.map((resource: SearchItem) => {
-      resource.url = `${client.baseURL}/resource/${resource.fields.uuid}`;
+    result.datas.resource = result.datas.resource?.map((resource: SearchItem) => {
+      userUUIDs.push(resource.fields.owner_uuid);
+      projectUUIDs.push(resource.fields.project_uuid);
+      resource.url = convertResourceURL(resource.fields.uuid);
       return resource;
     });
+
+    if (userUUIDs.length > 0) {
+      const users = await mapUsers(userUUIDs);
+      setUsers(users);
+    }
+    if (taskUUIDs.length > 0) {
+      const tasks = await mapTasks(taskUUIDs);
+      setTasks(tasks);
+    }
+    if (spaceUUIDs.length > 0) {
+      const spaces = await mapSpaces(spaceUUIDs);
+      setSpaces(spaces);
+    }
+    if (projectUUIDs.length > 0) {
+      const projects = await mapProjects(projectUUIDs);
+      setProjects(projects);
+    }
 
     setSearchResult(result);
     setLoading(false);
@@ -50,12 +102,14 @@ export function Search(props: Props) {
       onSearchTextChange={onSearchTextChange}
       throttle
     >
-      {searchResult.project ?
-        searchResult.project.map(
+      {searchResult.datas.project ?
+        searchResult.datas.project.map(
           (item: SearchItem, index: number) => (
             <List.Item
               key={index}
               title={item.fields.name}
+              subtitle={users[item.fields.owner] ? users[item.fields.owner].name : ""}
+              accessoryIcon={users[item.fields.owner] ? users[item.fields.owner].avatar : ""}
               actions={
                 <ActionPanel>
                   <OpenInBrowserAction url={item.url ? item.url : ""} />
@@ -65,24 +119,28 @@ export function Search(props: Props) {
             />
           )
         ) : null}
-      {searchResult.task ?
-        searchResult.task.map(
+      {searchResult.datas.task ?
+        searchResult.datas.task.map(
           (item: SearchItem, index: number) => (
             <List.Item
               key={index}
-              title={`#${item.fields.number} ${item.fields.summary}`}
-              subtitle={item.fields.desc}
+              title={`${tasks[item.fields.uuid] ? tasks[item.fields.uuid].priority?.value : ""} #${item.fields.number} ${item.fields.summary}`}
+              subtitle={projects[item.fields.project_uuid] ? projects[item.fields.project_uuid].name : ""}
+              accessoryTitle={users[item.fields.assign] ? users[item.fields.assign].name : ""}
+              accessoryIcon={users[item.fields.assign] ? users[item.fields.assign].avatar : ""}
               actions={
                 <ActionPanel>
                   <OpenInBrowserAction url={item.url ? item.url : ""} />
+                  <PushAction title="Record manhour"
+                              target={<AddOrUpdateManhour manhourTask={tasks[item.fields.uuid]} />} />
                   <CopyToClipboardAction title="Copy URL" content={item.url ? item.url : ""} />
                 </ActionPanel>
               }
             />
           )
         ) : null}
-      {searchResult.space ?
-        searchResult.space.map(
+      {searchResult.datas.space ?
+        searchResult.datas.space.map(
           (item: SearchItem, index: number) => (
             <List.Item
               key={index}
@@ -97,13 +155,15 @@ export function Search(props: Props) {
             />
           )
         ) : null}
-      {searchResult.page ?
-        searchResult.page.map(
+      {searchResult.datas.page ?
+        searchResult.datas.page.map(
           (item: SearchItem, index: number) => (
             <List.Item
               key={index}
               title={item.fields.title}
-              subtitle={item.fields.summary}
+              subtitle={spaces[item.fields.space_uuid] ? spaces[item.fields.space_uuid].name : ""}
+              accessoryTitle={item.fields.summary}
+              accessoryIcon={users[item.fields.owner_uuid] ? users[item.fields.owner_uuid].avatar : ""}
               actions={
                 <ActionPanel>
                   <OpenInBrowserAction url={item.url ? item.url : ""} />
@@ -113,12 +173,15 @@ export function Search(props: Props) {
             />
           )
         ) : null}
-      {searchResult.resource ?
-        searchResult.resource.map(
+      {searchResult.datas.resource ?
+        searchResult.datas.resource.map(
           (item: SearchItem, index: number) => (
             <List.Item
               key={index}
               title={item.fields.name}
+              subtitle={props.product === Product.WIKI ? item.fields.page_title : (projects[item.fields.project_uuid] ? projects[item.fields.project_uuid].name : "")}
+              accessoryTitle={users[item.fields.owner_uuid] ? users[item.fields.owner_uuid].name : ""}
+              accessoryIcon={users[item.fields.owner_uuid] ? users[item.fields.owner_uuid].avatar : ""}
               actions={
                 <ActionPanel>
                   <OpenInBrowserAction url={item.url ? item.url : ""} />

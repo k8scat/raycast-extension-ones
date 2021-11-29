@@ -7,30 +7,34 @@ export enum Product {
 }
 
 class Client {
-  public baseURL: string;
-  private baseAPI: string;
-  private teamUUID: string;
-  private userUUID: string;
-  private token: string;
-  private http: AxiosInstance;
+  public readonly baseURL: string;
+  private readonly baseAPI: string;
+  private readonly teamUUID: string;
+  private readonly userUUID: string;
+  private readonly token: string;
+  private readonly http: AxiosInstance;
 
   public constructor(baseAPI: string, teamUUID: string, userUUID: string, token: string) {
     this.baseAPI = baseAPI;
-    this.teamUUID = teamUUID;
-    this.userUUID = userUUID;
-    this.token = token;
-    this.http = this.createHttpClient();
     this.baseURL = `https://ones.ai/project/#/team/${teamUUID}`;
+    this.token = token;
+    this.userUUID = userUUID;
+    this.teamUUID = teamUUID;
+    this.http = this.createHttpClient();
   }
 
   public get(product: Product, url: string, params?: { [key: string]: any }): Promise<any> {
+    if (!this.http) {
+      return Promise.reject("http not initialized");
+    }
     url = `${this.baseAPI}/${product}/team/${this.teamUUID}/${url}`;
-    return this.http.get(url, {
-      params
-    });
+    return this.http.get(url, { params });
   }
 
   public post(product: Product, url: string, data?: { [key: string]: any }): Promise<any> {
+    if (!this.http) {
+      return Promise.reject("http not initialized");
+    }
     url = `${this.baseAPI}/${product}/team/${this.teamUUID}/${url}`;
     return this.http.post(url, data);
   }
@@ -44,22 +48,21 @@ class Client {
       if (config.headers === undefined) {
         config.headers = {} as AxiosRequestHeaders;
       }
-      config.headers["Ones-User-ID"] = this.userUUID;
-      config.headers["Ones-Auth-Token"] = this.token;
+      config.headers["Ones-User-ID"] = this.userUUID ? this.userUUID : "";
+      config.headers["Ones-Auth-Token"] = this.token ? this.token : "";
       return config;
-    }, function(error) {
-      console.log(error);
-      showToast(ToastStyle.Failure, error);
-      return Promise.reject(error);
+    }, function(err) {
+      showToast(ToastStyle.Failure, "request failed", (err as Error).message);
+      return Promise.reject(err);
     });
     httpClient.interceptors.response.use((response) => {
       if (response.status === 200) {
         return response.data;
       }
+      showToast(ToastStyle.Failure, "request failed", response.statusText);
       return Promise.reject(response);
     }, function(err) {
-      console.log("response err:", err);
-      showToast(ToastStyle.Failure, "response err");
+      showToast(ToastStyle.Failure, "request failed", (err as Error).message);
       return Promise.reject(err);
     });
     return httpClient;
