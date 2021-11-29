@@ -3,8 +3,8 @@
   "name": "ones",
   "title": "ONES",
   "description": "Raycast Extensions for [ones.ai](https://ones.ai).",
-  "icon": "command-icon.png",
-  "author": "K8sCat",
+  "icon": "command-icon-black.png",
+  "author": "k8scat",
   "license": "MIT",
   "keywords": [
     "ones",
