@@ -5,9 +5,10 @@ import {
   OpenInBrowserAction,
   PushAction,
   showToast,
+  SubmitFormAction,
   ToastStyle
 } from "@raycast/api";
-import { mapProjects, mapSpaces, mapTasks, mapUsers, search, SearchType } from "./lib/api";
+import { deleteTask, mapProjects, mapSpaces, mapTasks, mapUsers, search, SearchType } from "./lib/api";
 import { Project, SearchItem, SearchResult, Space, Task, User } from "./lib/type";
 import { useEffect, useState } from "react";
 import { Product } from "./lib/client";
@@ -37,15 +38,10 @@ export function Search(props: Props) {
 
   useEffect(() => {
     (async () => {
-      try {
-        if (props.text) {
-          await onSearchTextChange(props.text);
-        }
-      } catch (err) {
-        showToast(ToastStyle.Failure, (err as Error).message);
-      } finally {
-        setLoading(false);
+      if (props.text) {
+        await onSearchTextChange(props.text);
       }
+      setLoading(false);
     })();
   }, []);
 
@@ -107,7 +103,7 @@ export function Search(props: Props) {
       }
       setSearchResult(result);
     } catch (err) {
-      showToast(ToastStyle.Failure, "search failed", (err as Error).message);
+      showToast(ToastStyle.Failure, "Search failed", (err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -148,10 +144,18 @@ export function Search(props: Props) {
               actions={
                 <ActionPanel>
                   <OpenInBrowserAction url={item.url ? item.url : ""} />
-                  <PushAction title="Add Manhour"
+                  <PushAction icon="⌛️" title="Add Manhour"
                               target={<AddOrUpdateManhour manhourTask={tasks[item.fields.uuid]} />} />
-                  <PushAction title="Manage Manhour"
+                  <PushAction icon="🗓" title="Manage Manhour"
                               target={<ManageManhour taskUUID={item.fields.uuid} />} />
+                  <SubmitFormAction title="Delete Task" icon="⚠️" onSubmit={async () => {
+                    try {
+                      await deleteTask(item.fields.uuid);
+                      showToast(ToastStyle.Success, "Delete task successfully");
+                    } catch (err) {
+                      showToast(ToastStyle.Failure, "Delete task failed", (err as Error).message);
+                    }
+                  }} />
                   <CopyToClipboardAction title="Copy URL" content={item.url ? item.url : ""} />
                 </ActionPanel>
               }

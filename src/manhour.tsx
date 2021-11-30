@@ -157,7 +157,7 @@ export function AddOrUpdateManhour(props: { manhour?: Manhour; manhourTask?: Tas
                       description: input.description
                     };
                     await addManhour(manhour);
-                    showToast(ToastStyle.Success, `Recorded ${hours} hours`);
+                    showToast(ToastStyle.Success, "Add manhour successfully", `${input.manhourType} ${hours}h`);
                   } else {
                     manhour = Object.assign({}, props.manhour, {
                       startTime: Math.floor(input.startTime.getTime() / 1000),
@@ -165,11 +165,11 @@ export function AddOrUpdateManhour(props: { manhour?: Manhour; manhourTask?: Tas
                       description: input.description
                     });
                     await updateManhour(manhour);
-                    showToast(ToastStyle.Success, `Modified ${hours} hours`);
+                    showToast(ToastStyle.Success, "Modified");
                   }
                   pop();
                 } catch (err) {
-                  showToast(ToastStyle.Failure, `${(props.manhour ? "modify" : "update") + " manhour failed"}`, (err as Error).message);
+                  showToast(ToastStyle.Failure, `${(props.manhour ? "Modify" : "Add") + " manhour failed"}`, (err as Error).message);
                 }
               }} />
             </ActionPanel>
@@ -215,7 +215,7 @@ export function ManageManhour(props: ManageManhourProps) {
         setManhourEstimatedSums(result.manhourEstimatedSums);
         setManhourDates(result.manhourDates);
       } catch (err) {
-        showToast(ToastStyle.Failure, "query manhour failed", (err as Error).message);
+        showToast(ToastStyle.Failure, "Query manhour failed", (err as Error).message);
       } finally {
         setLoading(false);
       }
@@ -230,7 +230,7 @@ export function ManageManhour(props: ManageManhourProps) {
       startDate = moment().subtract(manhourDays, "d").format(dateFormat);
     } else {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) {
-        showToast(ToastStyle.Failure, `invalid date format, should be ${dateFormat}`);
+        showToast(ToastStyle.Failure, `Invalid date format, should be ${dateFormat}`);
         return;
       }
       startDate = text;
@@ -248,7 +248,7 @@ export function ManageManhour(props: ManageManhourProps) {
       setManhourDates(result.manhourDates);
       setLoading(false);
     } catch (err) {
-      showToast(ToastStyle.Failure, "query manhour failed", (err as Error).message);
+      showToast(ToastStyle.Failure, "Query manhour failed", (err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -263,7 +263,7 @@ export function ManageManhour(props: ManageManhourProps) {
       {manhourDates.map(
         (startDate: string, index: number) => (
           <List.Section
-            title={`${startDate} / ${weekdaysMap[startDate]} / Recorded ${manhourRecordedSums[startDate]}h / Estimated ${manhourEstimatedSums[startDate]}h`}
+            title={`${startDate} / ${weekdaysMap[startDate]} ${manhourRecordedSums[startDate] ? ` / Recorded ${manhourRecordedSums[startDate]}h` : ""}${manhourEstimatedSums[startDate] ? ` / Estimated ${manhourEstimatedSums[startDate]}h` : ""}`}
             key={index}
           >
             {manhoursMap[startDate].map((item: Manhour) => (
@@ -275,18 +275,18 @@ export function ManageManhour(props: ManageManhourProps) {
                 accessoryIcon={item.owner.avatar}
                 actions={
                   <ActionPanel>
-                    <PushAction title="Modify Manhour" target={<AddOrUpdateManhour manhour={item} />} />
-                    <PushAction title="Record Manhour" target={<AddOrUpdateManhour />} />
-                    <SubmitFormAction title="Delete manhour" onSubmit={async () => {
+                    <PushAction icon="✏️" title="Modify Manhour" target={<AddOrUpdateManhour manhour={item} />} />
+                    <PushAction icon="⌛️" title="Add Manhour" target={<AddOrUpdateManhour />} />
+                    <SubmitFormAction icon="⚠️" title="Delete Manhour" onSubmit={async () => {
                       try {
                         if (!item.uuid) {
-                          showToast(ToastStyle.Failure, "manhour uuid is empty");
+                          showToast(ToastStyle.Failure, "Manhour uuid is empty");
                           return;
                         }
                         await deleteManhour(item.uuid);
-                        showToast(ToastStyle.Success, `delete manhour success`);
+                        showToast(ToastStyle.Success, "Delete manhour successfully");
                       } catch (err) {
-                        showToast(ToastStyle.Failure, (err as Error).message);
+                        showToast(ToastStyle.Failure, "Delete manhour failed", (err as Error).message);
                       }
                     }} />
                     <OpenInBrowserAction url={item.task.url ? item.task.url : ""} />

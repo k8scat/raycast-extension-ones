@@ -117,6 +117,9 @@ export class Client {
       this.email = await this.getEmail();
       this.password = await this.getPassword();
       this.teamUUID = await this.getTeamUUID();
+      if (preferences.teamUUID.value) {
+        this.teamUUID = preferences.teamUUID.value as string;
+      }
       this.userUUID = await this.getUserUUID();
       this.token = await this.getToken();
       if (!this.teamUUID || !this.userUUID || !this.token ||
@@ -159,6 +162,7 @@ export class Client {
       }
       return Promise.reject(new Error(response.data));
     }, function(err) {
+      console.log(err.response.data);
       return Promise.reject(err);
     });
   }

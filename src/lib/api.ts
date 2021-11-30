@@ -294,10 +294,8 @@ export async function addManhour(manhour: Manhour): Promise<void> {
     description: manhour.description
   };
   const data: GraphqlData = { query, variables };
-  console.log(data);
   try {
     await client.post(Product.PROJECT, "items/graphql", data);
-    return Promise.resolve();
   } catch (err) {
     return Promise.reject(new Error(`add manhour failed: ${(err as Error).message}`));
   }
@@ -332,7 +330,6 @@ export async function updateManhour(manhour: Manhour): Promise<void> {
   const data: GraphqlData = { query, variables };
   try {
     await client.post(Product.PROJECT, "items/graphql", data);
-    return Promise.resolve();
   } catch (err) {
     return Promise.reject(new Error(`update manhour failed: ${(err as Error).message}`));
   }
@@ -372,5 +369,13 @@ export async function login(data: { email: string; password: string; }): Promise
   } catch (err) {
     await clearLocalStorage();
     return Promise.reject(new Error(`login failed: ${(err as Error).message}`));
+  }
+}
+
+export async function deleteTask(uuid: string): Promise<void> {
+  try {
+    await client.post(Product.PROJECT, `task/${uuid}/delete`);
+  } catch (err) {
+    return Promise.reject(new Error(`delete task failed: ${(err as Error).message}`));
   }
 }

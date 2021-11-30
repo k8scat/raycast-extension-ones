@@ -32,9 +32,9 @@
 | Name          | Required | Description                                                        | DefaultValue    | 
 |---------------|----------|--------------------------------------------------------------------|-----------------|
 | URL           | true     | URL for ONES                                                       | https://ones.ai |
-| Team UUID     | true     | Team UUID for ONES API                                             |                 |
-| User UUID     | true     | User UUID for ONES API                                             |                 |
-| Token         | true     | Token for ONES API                                                 |                 |
+| Email         | true     | Email for ONES                                                     |                 |
+| Password      | true     | Password for ONES                                                  |                 |
+| Team UUID     | false    | Team UUID for ONES                                                 |                 |
 | Manhour Owner | false    | Manhour owner name or uuid, set to ONES API - UserUUID while empty |                 |
 | Manhour Days  | false    | Query Manhours in n days                                           | 7               |
 | Manhour Task  | false    | UUID of the task where manhour record                              |                 |
