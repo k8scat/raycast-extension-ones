@@ -14,7 +14,8 @@
     - Project
         - [x] project
         - [x] task
-            - [x] record man-hour
+            - [x] record manhour
+            - [x] delete task
         - [x] sprint
         - [x] resource
     - Wiki
