@@ -6,7 +6,7 @@
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-purple.svg" alt="License: MIT"></a>
 </p>
 
-Raycast extensions for [ones.ai](https://ones.ai).
+[Raycast](https://www.raycast.com/) extensions for [ones.ai](https://ones.ai).
 
 ## Support
 
@@ -29,15 +29,16 @@ Raycast extensions for [ones.ai](https://ones.ai).
 
 ## Preferences
 
-| Name | Required | Description | DefaultValue | 
-| --- | --- | --- | --- |
-| Base URL | true | Base URL for ONES API | https://ones.ai/project/api |
-| Team UUID | true | Team UUID for ONES API | |
-| User UUID | true | User UUID for ONES API | |
-| Token | true | Token for ONES API | |
-| Manhour Owner | false | Manhour owner name or uuid, set to ONES API - UserUUID while empty | |
-| Manhour Days | false | Query Manhours in n days, default set to 7 | 7 |
-| Manhour Task | false | UUID of the task where manhour record | |
+| Name          | Required | Description                                                        | DefaultValue    | 
+|---------------|----------|--------------------------------------------------------------------|-----------------|
+| URL           | true     | URL for ONES                                                       | https://ones.ai |
+| Team UUID     | true     | Team UUID for ONES API                                             |                 |
+| User UUID     | true     | User UUID for ONES API                                             |                 |
+| Token         | true     | Token for ONES API                                                 |                 |
+| Manhour Owner | false    | Manhour owner name or uuid, set to ONES API - UserUUID while empty |                 |
+| Manhour Days  | false    | Query Manhours in n days                                           | 7               |
+| Manhour Task  | false    | UUID of the task where manhour record                              |                 |
+| Manhour Mode  | false    | Manhour mode for ONES                                              | Simple          |
 
 ## LICENSE
 
