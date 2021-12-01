@@ -200,6 +200,16 @@ export function ManageManhour(props: ManageManhourProps) {
   const [manhourEstimatedSums, setManhourEstimatedSums] = useState<{ [key: string]: number }>({});
   const [loading, setLoading] = useState<boolean>(true);
 
+  const refresh = async (userUUID: string, startDate: string, taskUUID?: string) => {
+    const manhours = await listManhours({ userUUID, startDate, taskUUID });
+    const result = await convertResult(manhours);
+    setManhoursMap(result.manhoursMap);
+    setWeekdaysMap(result.weekdaysMap);
+    setManhourRecordedSums(result.manhourRecordedSums);
+    setManhourEstimatedSums(result.manhourEstimatedSums);
+    setManhourDates(result.manhourDates);
+  };
+
   useEffect(() => {
     (async () => {
       console.log("useEffect");
@@ -207,13 +217,7 @@ export function ManageManhour(props: ManageManhourProps) {
         const userUUID = await getManhourUserUUID();
         const manhourDays: number = preferences.manhourDays.value ? preferences.manhourDays.value as number : 7;
         const startDate = moment().subtract(manhourDays, "d").format("YYYY-MM-DD");
-        const manhours = await listManhours({ userUUID, startDate, taskUUID: props.taskUUID });
-        const result = await convertResult(manhours);
-        setManhoursMap(result.manhoursMap);
-        setWeekdaysMap(result.weekdaysMap);
-        setManhourRecordedSums(result.manhourRecordedSums);
-        setManhourEstimatedSums(result.manhourEstimatedSums);
-        setManhourDates(result.manhourDates);
+        await refresh(userUUID, startDate, props.taskUUID);
       } catch (err) {
         showToast(ToastStyle.Failure, "Query manhour failed", (err as Error).message);
       } finally {
@@ -239,13 +243,7 @@ export function ManageManhour(props: ManageManhourProps) {
     setLoading(true);
     try {
       const userUUID = await getManhourUserUUID();
-      const manhours = await listManhours({ userUUID, startDate, taskUUID: props.taskUUID });
-      const result = await convertResult(manhours);
-      setManhoursMap(result.manhoursMap);
-      setWeekdaysMap(result.weekdaysMap);
-      setManhourRecordedSums(result.manhourRecordedSums);
-      setManhourEstimatedSums(result.manhourEstimatedSums);
-      setManhourDates(result.manhourDates);
+      await refresh(userUUID, startDate, props.taskUUID);
       setLoading(false);
     } catch (err) {
       showToast(ToastStyle.Failure, "Query manhour failed", (err as Error).message);

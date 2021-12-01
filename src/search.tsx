@@ -185,7 +185,7 @@ export function Search(props: Props) {
               key={index}
               title={item.fields.title}
               subtitle={spaces[item.fields.space_uuid] ? spaces[item.fields.space_uuid].name : ""}
-              accessoryTitle={item.fields.summary}
+              accessoryTitle={users[item.fields.owner_uuid] ? users[item.fields.owner_uuid].name : ""}
               accessoryIcon={users[item.fields.owner_uuid] ? users[item.fields.owner_uuid].avatar : ""}
               actions={
                 <ActionPanel>
