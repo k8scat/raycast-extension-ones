@@ -2,7 +2,7 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "ones",
   "title": "ONES",
-  "description": "Raycast Extension for ones.ai",
+  "description": "Raycast Extension for ONES",
   "icon": "command-icon-black.png",
   "author": "k8scat",
   "license": "MIT",

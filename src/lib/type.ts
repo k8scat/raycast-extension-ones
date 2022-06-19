@@ -114,7 +114,7 @@ export interface Preferences {
   password: string;
   teamUUID?: string;
   manhourUser?: string;
-  manhourDays?: string;
+  manhourDays: string;
   manhourTaskUUID?: string;
-  manhourMode?: string;
+  manhourMode: string;
 }

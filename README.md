@@ -6,7 +6,7 @@
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-purple.svg" alt="License: MIT"></a>
 </p>
 
-[Raycast](https://www.raycast.com/) extension for [ones.ai](https://ones.ai).
+[Raycast](https://www.raycast.com/) extension for [ONES](https://ones.ai).
 
 [中文文档](./README_zh.md)
 
@@ -49,16 +49,16 @@ Or search `ONES` in the APP Store.
 
 ## Preferences
 
-| Name          | Required | Description                                            | DefaultValue    |
-| ------------- | -------- | ------------------------------------------------------ | --------------- |
+| Name          | Required | Description                                            | DefaultValue                       |
+| ------------- | -------- | ------------------------------------------------------ | ---------------------------------- |
 | URL           | true     | URL for ONES                                           | [https://ones.ai](https://ones.ai) |
-| Email         | true     | Email for ONES                                         |                 |
-| Password      | true     | Password for ONES                                      |                 |
-| Team UUID     | false    | Team UUID for ONES                                     |                 |
-| Manhour Owner | false    | Manhour owner name or uuid                             | Login User UUID |
-| Manhour Days  | false    | Query Manhours in n days                               | 7               |
-| Manhour Task  | false    | UUID of the task where manhour record                  |                 |
-| Manhour Mode  | false    | Manhour mode for ONES, support `Simple` and `Detailed` | Simple          |
+| Email         | true     | Email for ONES                                         |                                    |
+| Password      | true     | Password for ONES                                      |                                    |
+| Team UUID     | false    | Team UUID for ONES                                     |                                    |
+| Manhour Owner | false    | Manhour owner name or uuid                             | Login User UUID                    |
+| Manhour Days  | false    | Query Manhours in n days                               | 7                                  |
+| Manhour Task  | false    | UUID of the task where manhour record                  |                                    |
+| Manhour Mode  | false    | Manhour mode for ONES, support `Simple` and `Detailed` | Simple                             |
 
 ## Original Repository
 
