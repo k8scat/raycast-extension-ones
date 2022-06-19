@@ -1,13 +1,4 @@
-import {
-  ActionPanel,
-  CopyToClipboardAction,
-  List,
-  OpenInBrowserAction,
-  PushAction,
-  showToast,
-  SubmitFormAction,
-  ToastStyle
-} from "@raycast/api";
+import { ActionPanel, Action, List, showToast, Toast } from "@raycast/api";
 import { deleteTask, mapProjects, mapSpaces, mapTasks, mapUsers, search, SearchType } from "./lib/api";
 import { Project, SearchItem, SearchResult, Space, Task, User } from "./lib/type";
 import { useEffect, useState } from "react";
@@ -28,7 +19,7 @@ export function Search(props: Props) {
     total: 0,
     has_next: false,
     next_cursor: 0,
-    took_time: 0
+    took_time: 0,
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [users, setUsers] = useState<{ [key: string]: User }>({});
@@ -103,21 +94,16 @@ export function Search(props: Props) {
       }
       setSearchResult(result);
     } catch (err) {
-      showToast(ToastStyle.Failure, "Search failed", (err as Error).message);
+      showToast(Toast.Style.Failure, "Search failed", (err as Error).message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <List
-      isLoading={loading}
-      onSearchTextChange={onSearchTextChange}
-      throttle
-    >
-      {searchResult.datas.project ?
-        searchResult.datas.project.map(
-          (item: SearchItem, index: number) => (
+    <List isLoading={loading} onSearchTextChange={onSearchTextChange} throttle>
+      {searchResult.datas.project
+        ? searchResult.datas.project.map((item: SearchItem, index: number) => (
             <List.Item
               key={index}
               title={item.fields.name}
@@ -125,62 +111,67 @@ export function Search(props: Props) {
               accessoryIcon={users[item.fields.owner] ? users[item.fields.owner].avatar : ""}
               actions={
                 <ActionPanel>
-                  <OpenInBrowserAction url={item.url ? item.url : ""} />
-                  <CopyToClipboardAction title="Copy URL" content={item.url ? item.url : ""} />
+                  <Action.OpenInBrowser url={item.url ? item.url : ""} />
+                  <Action.CopyToClipboard title="Copy URL" content={item.url ? item.url : ""} />
                 </ActionPanel>
               }
             />
-          )
-        ) : null}
-      {searchResult.datas.task ?
-        searchResult.datas.task.map(
-          (item: SearchItem, index: number) => (
+          ))
+        : null}
+      {searchResult.datas.task
+        ? searchResult.datas.task.map((item: SearchItem, index: number) => (
             <List.Item
               key={index}
-              title={`${tasks[item.fields.uuid] ? tasks[item.fields.uuid].priority?.value : ""} #${item.fields.number} ${item.fields.summary}`}
+              title={`${tasks[item.fields.uuid] ? tasks[item.fields.uuid].priority?.value : ""} #${
+                item.fields.number
+              } ${item.fields.summary}`}
               subtitle={projects[item.fields.project_uuid] ? projects[item.fields.project_uuid].name : ""}
               accessoryTitle={users[item.fields.assign] ? users[item.fields.assign].name : ""}
               accessoryIcon={users[item.fields.assign] ? users[item.fields.assign].avatar : ""}
               actions={
                 <ActionPanel>
-                  <OpenInBrowserAction url={item.url ? item.url : ""} />
-                  <PushAction icon="⌛️" title="Add Manhour"
-                              target={<AddOrUpdateManhour manhourTask={tasks[item.fields.uuid]} />} />
-                  <PushAction icon="🗓" title="Manage Manhour"
-                              target={<ManageManhour taskUUID={item.fields.uuid} />} />
-                  <SubmitFormAction title="Delete Task" icon="⚠️" onSubmit={async () => {
-                    try {
-                      await deleteTask(item.fields.uuid);
-                      showToast(ToastStyle.Success, "Delete task successfully");
-                    } catch (err) {
-                      showToast(ToastStyle.Failure, "Delete task failed", (err as Error).message);
-                    }
-                  }} />
-                  <CopyToClipboardAction title="Copy URL" content={item.url ? item.url : ""} />
+                  <Action.OpenInBrowser url={item.url ? item.url : ""} />
+                  <Action.Push
+                    icon="⌛️"
+                    title="Add Manhour"
+                    target={<AddOrUpdateManhour manhourTask={tasks[item.fields.uuid]} />}
+                  />
+                  <Action.Push icon="🗓" title="Manage Manhour" target={<ManageManhour taskUUID={item.fields.uuid} />} />
+                  <Action.SubmitForm
+                    title="Delete Task"
+                    icon="⚠️"
+                    onSubmit={async () => {
+                      try {
+                        await deleteTask(item.fields.uuid);
+                        showToast(Toast.Style.Success, "Delete task successfully");
+                      } catch (err) {
+                        showToast(Toast.Style.Failure, "Delete task failed", (err as Error).message);
+                      }
+                    }}
+                  />
+                  <Action.CopyToClipboard title="Copy URL" content={item.url ? item.url : ""} />
                 </ActionPanel>
               }
             />
-          )
-        ) : null}
-      {searchResult.datas.space ?
-        searchResult.datas.space.map(
-          (item: SearchItem, index: number) => (
+          ))
+        : null}
+      {searchResult.datas.space
+        ? searchResult.datas.space.map((item: SearchItem, index: number) => (
             <List.Item
               key={index}
               title={item.fields.title}
               subtitle={item.fields.description}
               actions={
                 <ActionPanel>
-                  <OpenInBrowserAction url={item.url ? item.url : ""} />
-                  <CopyToClipboardAction title="Copy URL" content={item.url ? item.url : ""} />
+                  <Action.OpenInBrowser url={item.url ? item.url : ""} />
+                  <Action.CopyToClipboard title="Copy URL" content={item.url ? item.url : ""} />
                 </ActionPanel>
               }
             />
-          )
-        ) : null}
-      {searchResult.datas.page ?
-        searchResult.datas.page.map(
-          (item: SearchItem, index: number) => (
+          ))
+        : null}
+      {searchResult.datas.page
+        ? searchResult.datas.page.map((item: SearchItem, index: number) => (
             <List.Item
               key={index}
               title={item.fields.title}
@@ -189,31 +180,36 @@ export function Search(props: Props) {
               accessoryIcon={users[item.fields.owner_uuid] ? users[item.fields.owner_uuid].avatar : ""}
               actions={
                 <ActionPanel>
-                  <OpenInBrowserAction url={item.url ? item.url : ""} />
-                  <CopyToClipboardAction title="Copy URL" content={item.url ? item.url : ""} />
+                  <Action.OpenInBrowser url={item.url ? item.url : ""} />
+                  <Action.CopyToClipboard title="Copy URL" content={item.url ? item.url : ""} />
                 </ActionPanel>
               }
             />
-          )
-        ) : null}
-      {searchResult.datas.resource ?
-        searchResult.datas.resource.map(
-          (item: SearchItem, index: number) => (
+          ))
+        : null}
+      {searchResult.datas.resource
+        ? searchResult.datas.resource.map((item: SearchItem, index: number) => (
             <List.Item
               key={index}
               title={item.fields.name}
-              subtitle={props.product === Product.WIKI ? item.fields.page_title : (projects[item.fields.project_uuid] ? projects[item.fields.project_uuid].name : "")}
+              subtitle={
+                props.product === Product.WIKI
+                  ? item.fields.page_title
+                  : projects[item.fields.project_uuid]
+                  ? projects[item.fields.project_uuid].name
+                  : ""
+              }
               accessoryTitle={users[item.fields.owner_uuid] ? users[item.fields.owner_uuid].name : ""}
               accessoryIcon={users[item.fields.owner_uuid] ? users[item.fields.owner_uuid].avatar : ""}
               actions={
                 <ActionPanel>
-                  <OpenInBrowserAction url={item.url ? item.url : ""} />
-                  <CopyToClipboardAction title="Copy URL" content={item.url ? item.url : ""} />
+                  <Action.OpenInBrowser url={item.url ? item.url : ""} />
+                  <Action.CopyToClipboard title="Copy URL" content={item.url ? item.url : ""} />
                 </ActionPanel>
               }
             />
-          )
-        ) : null}
+          ))
+        : null}
     </List>
   );
 }

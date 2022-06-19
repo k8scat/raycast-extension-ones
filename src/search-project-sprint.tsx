@@ -1,4 +1,4 @@
-import { ActionPanel, CopyToClipboardAction, List, OpenInBrowserAction, render } from "@raycast/api";
+import { ActionPanel, Action, List } from "@raycast/api";
 import { searchSprints } from "./lib/api";
 import { Sprint } from "./lib/type";
 import { useState } from "react";
@@ -23,29 +23,27 @@ export function SearchSprints() {
   };
 
   return (
-    <List
-      isLoading={loading}
-      onSearchTextChange={onSearchTextChange}
-      throttle
-    >
-      {searchResult.map(
-        (item: Sprint, index: number) => (
-          <List.Item
-            key={index}
-            title={item.name}
-            subtitle={item.assign.name}
-            accessoryTitle={`${item.planStartTime ? convertTimestamp(item.planStartTime) : "?"} - ${item.planEndTime ? convertTimestamp(item.planEndTime) : "?"}`}
-            actions={
-              <ActionPanel>
-                <OpenInBrowserAction url={item.url ? item.url : ""} />
-                <CopyToClipboardAction title="Copy URL" content={item.url ? item.url : ""} />
-              </ActionPanel>
-            }
-          />
-        )
-      )}
+    <List isLoading={loading} onSearchTextChange={onSearchTextChange} throttle>
+      {searchResult.map((item: Sprint, index: number) => (
+        <List.Item
+          key={index}
+          title={item.name}
+          subtitle={item.assign.name}
+          accessoryTitle={`${item.planStartTime ? convertTimestamp(item.planStartTime) : "?"} - ${
+            item.planEndTime ? convertTimestamp(item.planEndTime) : "?"
+          }`}
+          actions={
+            <ActionPanel>
+              <Action.OpenInBrowser url={item.url ? item.url : ""} />
+              <Action.CopyToClipboard title="Copy URL" content={item.url ? item.url : ""} />
+            </ActionPanel>
+          }
+        />
+      ))}
     </List>
   );
 }
 
-render(<SearchSprints />);
+export default function Command() {
+  return <SearchSprints />;
+}
